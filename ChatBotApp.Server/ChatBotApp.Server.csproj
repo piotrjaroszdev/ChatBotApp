@@ -20,6 +20,7 @@
     <ProjectReference Include="..\chatbotapp.client\chatbotapp.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\ChatBotApp.Data\ChatBotApp.Data.csproj" />
   </ItemGroup>
 
 </Project>
