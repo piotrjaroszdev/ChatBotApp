@@ -12,12 +12,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ChatContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Wczytaj origins z konfiguracji
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularDevClient", policy =>
     {
-        policy.WithOrigins("https://127.0.0.1:4200")
+        policy.WithOrigins(allowedOrigins ?? Array.Empty<string>())
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
