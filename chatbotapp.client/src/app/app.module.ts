@@ -14,6 +14,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatCardModule } from '@angular/material/card';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -34,6 +35,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
     TranslateModule.forRoot({
       defaultLanguage: 'pl',
       loader: {
