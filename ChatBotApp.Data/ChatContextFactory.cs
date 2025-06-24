@@ -8,14 +8,8 @@ namespace ChatBotApp.Data
     {
         public ChatContext CreateDbContext(string[] args)
         {
-            var basePath = Directory.GetCurrentDirectory();
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .AddJsonFile("appsettings.json", optional: false)
-                .Build();
             var optionsBuilder = new DbContextOptionsBuilder<ChatContext>();
-            optionsBuilder.UseSqlServer("DefaultConnection");
-
+            optionsBuilder.UseSqlServer("Server=localhost;Database=ChatBotDb;Trusted_Connection=True;TrustServerCertificate=True;");
             return new ChatContext(optionsBuilder.Options);
         }
     }
