@@ -1,0 +1,17 @@
+<!-- chat.component.html -->
+<div class="chat-window">
+    <app-message
+      *ngFor="let msg of messages"
+      [message]="msg"
+      (rate)="rateMessage($event)">
+    </app-message>
+  
+    <div *ngIf="isTyping" class="typing-indicator">AI is typing...</div>
+  
+    <mat-form-field class="input">
+      <input matInput placeholder="Wpisz wiadomość" [(ngModel)]="newContent" (keyup.enter)="send()" />
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="send()">Wyślij</button>
+  </div>
+  
+  

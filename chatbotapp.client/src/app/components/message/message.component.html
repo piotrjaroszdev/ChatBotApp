@@ -1,0 +1,10 @@
+<!-- message.component.html -->
+<div [ngClass]="message.sender">
+    <p>{{ message.content }}</p>
+    <small>{{ message.timestamp }}</small>
+    <div *ngIf="message.sender === 'bot'">
+      <button mat-icon-button (click)="setRating(1)" [disabled]="message.rating === 1">👍</button>
+      <button mat-icon-button (click)="setRating(-1)" [disabled]="message.rating === -1">👎</button>
+    </div>
+  </div>
+  
