@@ -28,7 +28,7 @@ namespace ChatBotApp.Server.Controllers
             var botReply = new Message
             {
                 Sender = "bot",
-                Content = GenerateFakeReply(), // lub "Lorem ipsum..."
+                Content = GenerateFakeReply(),
                 Timestamp = DateTime.UtcNow
             };
 
