@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { Message } from '../../models/message';
 import { ChatService } from '../../services/chat-service.service';
-import { MessageComponent } from '../message/message.component';
+import { TranslateService } from '@ngx-translate/core';
+
 
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
-
 })
 export class ChatComponent implements OnInit {
   messages: Message[] = [];
   newContent = '';
   isTyping = false;
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService) {
+  }
 
   ngOnInit(): void {
     this.chatService.getHistory().subscribe(history => this.messages = history);

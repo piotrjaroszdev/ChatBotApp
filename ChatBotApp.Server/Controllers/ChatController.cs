@@ -41,7 +41,9 @@ namespace ChatBotApp.Server.Controllers
         private string GenerateFakeReply()
         {
             string[] responses = {
-            "Lorem ipsum dolor sit amet.",
+            "Fajny pomysł",
+            "To jest niesamowite",
+            "Potrzebuję więcej informacji",
             "Ciekawa myśl, rozwiniesz?",
             "Brzmi intrygująco!",
             "Możesz opowiedzieć coś więcej?"
