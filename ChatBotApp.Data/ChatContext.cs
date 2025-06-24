@@ -13,7 +13,7 @@
             {
             }
 
-            public DbSet<Message> Messages { get; set; }
+            public virtual DbSet<Message> Messages { get; set; }
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
