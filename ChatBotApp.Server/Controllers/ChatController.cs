@@ -1,7 +1,6 @@
-﻿using ChatBotApp.Data.ChatBotApp.Api.Data;
-using ChatBotApp.Data.Models;
+﻿using ChatBotApp.Data.Models;
+using ChatBotApp.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ChatBotApp.Server.Controllers
 {
@@ -9,59 +8,30 @@ namespace ChatBotApp.Server.Controllers
     [Route("api/[controller]")]
     public class ChatController : ControllerBase
     {
-        private readonly ChatContext _context;
+        private readonly IMessageRepository _repository;
 
-        public ChatController(ChatContext context)
+        public ChatController(IMessageRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         [HttpGet("history")]
         public async Task<IActionResult> GetHistory() =>
-            Ok(await _context.Messages.OrderBy(m => m.Timestamp).ToListAsync());
+            Ok(await _repository.GetHistoryAsync());
 
         [HttpPost("send")]
         public async Task<IActionResult> SendMessage([FromBody] Message userMessage)
         {
-            _context.Messages.Add(userMessage);
-
-            var botReply = new Message
-            {
-                Sender = "bot",
-                Content = GenerateFakeReply(),
-                Timestamp = DateTime.UtcNow
-            };
-
-            _context.Messages.Add(botReply);
-            await _context.SaveChangesAsync();
-
+            var botReply = await _repository.AddUserAndBotMessageAsync(userMessage);
             return Ok(botReply);
-        }
-
-        private string GenerateFakeReply()
-        {
-            string[] responses = {
-            "Fajny pomysł",
-            "To jest niesamowite",
-            "Potrzebuję więcej informacji",
-            "Ciekawa myśl, rozwiniesz?",
-            "Brzmi intrygująco!",
-            "Możesz opowiedzieć coś więcej?"
-        };
-            return responses[new Random().Next(responses.Length)];
         }
 
         [HttpPost("rate")]
         public async Task<IActionResult> RateMessage(int messageId, int rating)
         {
-            var message = await _context.Messages.FindAsync(messageId);
-            if (message == null) return NotFound();
-
-            message.Rating = rating;
-            await _context.SaveChangesAsync();
-
+            var updated = await _repository.RateMessageAsync(messageId, rating);
+            if (!updated) return NotFound();
             return Ok();
         }
     }
-
 }

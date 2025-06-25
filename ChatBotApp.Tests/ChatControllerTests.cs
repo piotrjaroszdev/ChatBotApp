@@ -1,94 +1,82 @@
-using ChatBotApp.Data.ChatBotApp.Api.Data;
 using ChatBotApp.Data.Models;
 using ChatBotApp.Server.Controllers;
+using ChatBotApp.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace ChatBotApp.Tests
 {
     public class ChatControllerTests
     {
-        private static Mock<DbSet<Message>> CreateMockDbSet(List<Message> data)
+        [Fact]
+        public async Task GetHistory_ReturnsAllMessages()
         {
-            var queryable = data.AsQueryable();
+            // Arrange
+            var messages = new List<Message>
+            {
+                new Message { Id = 1, Sender = "user", Content = "Hi" },
+                new Message { Id = 2, Sender = "bot", Content = "Hello" }
+            };
+            var mockRepo = new Mock<IMessageRepository>();
+            mockRepo.Setup(r => r.GetHistoryAsync()).ReturnsAsync(messages);
 
-            var mockSet = new Mock<DbSet<Message>>();
-            mockSet.As<IQueryable<Message>>().Setup(m => m.Provider).Returns(queryable.Provider);
-            mockSet.As<IQueryable<Message>>().Setup(m => m.Expression).Returns(queryable.Expression);
-            mockSet.As<IQueryable<Message>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
-            mockSet.As<IQueryable<Message>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
+            var controller = new ChatController(mockRepo.Object);
 
-            mockSet.Setup(d => d.Add(It.IsAny<Message>())).Callback<Message>(data.Add);
+            // Act
+            var result = await controller.GetHistory();
 
-            mockSet.Setup(d => d.FindAsync(It.IsAny<object[]>()))
-                .Returns<object[]>(ids =>
-                {
-                    var id = (int)ids[0];
-                    var entity = data.FirstOrDefault(m => m.Id == id);
-                    return new ValueTask<Message>(entity);
-                });
-
-            return mockSet;
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var resultMessages = Assert.IsAssignableFrom<IEnumerable<Message>>(okResult.Value);
+            Assert.Equal(2, System.Linq.Enumerable.Count(resultMessages));
         }
 
         [Fact]
         public async Task SendMessage_AddsUserAndBotMessage()
         {
             // Arrange
-            var messages = new List<Message>();
-            var mockSet = CreateMockDbSet(messages);
+            var userMessage = new Message { Id = 1, Sender = "user", Content = "Test" };
+            var botReply = new Message { Id = 2, Sender = "bot", Content = "Bot reply" };
 
-            var mockContext = new Mock<ChatContext>(new DbContextOptions<ChatContext>());
-            mockContext.Setup(c => c.Messages).Returns(mockSet.Object);
-            mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
+            var mockRepo = new Mock<IMessageRepository>();
+            mockRepo.Setup(r => r.AddUserAndBotMessageAsync(userMessage)).ReturnsAsync(botReply);
 
-            var controller = new ChatController(mockContext.Object);
-            var userMessage = new Message { Sender = "user", Content = "Test", Timestamp = System.DateTime.UtcNow };
+            var controller = new ChatController(mockRepo.Object);
 
             // Act
             var result = await controller.SendMessage(userMessage);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var botReply = Assert.IsType<Message>(okResult.Value);
-            Assert.Equal("bot", botReply.Sender);
-            Assert.Equal(2, messages.Count);
+            var returnedBotReply = Assert.IsType<Message>(okResult.Value);
+            Assert.Equal("bot", returnedBotReply.Sender);
+            Assert.Equal("Bot reply", returnedBotReply.Content);
         }
 
         [Fact]
         public async Task RateMessage_UpdatesRating()
         {
             // Arrange
-            var message = new Message { Id = 1, Sender = "user", Content = "Test", Timestamp = System.DateTime.UtcNow };
-            var messages = new List<Message> { message };
-            var mockSet = CreateMockDbSet(messages);
+            var mockRepo = new Mock<IMessageRepository>();
+            mockRepo.Setup(r => r.RateMessageAsync(1, 5)).ReturnsAsync(true);
 
-            var mockContext = new Mock<ChatContext>(new DbContextOptions<ChatContext>());
-            mockContext.Setup(c => c.Messages).Returns(mockSet.Object);
-            mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
-
-            var controller = new ChatController(mockContext.Object);
+            var controller = new ChatController(mockRepo.Object);
 
             // Act
             var result = await controller.RateMessage(1, 5);
 
             // Assert
             Assert.IsType<OkResult>(result);
-            Assert.Equal(5, message.Rating);
         }
 
         [Fact]
         public async Task RateMessage_ReturnsNotFound_WhenMessageDoesNotExist()
         {
             // Arrange
-            var messages = new List<Message>();
-            var mockSet = CreateMockDbSet(messages);
+            var mockRepo = new Mock<IMessageRepository>();
+            mockRepo.Setup(r => r.RateMessageAsync(999, 5)).ReturnsAsync(false);
 
-            var mockContext = new Mock<ChatContext>(new DbContextOptions<ChatContext>());
-            mockContext.Setup(c => c.Messages).Returns(mockSet.Object);
-
-            var controller = new ChatController(mockContext.Object);
+            var controller = new ChatController(mockRepo.Object);
 
             // Act
             var result = await controller.RateMessage(999, 5);
