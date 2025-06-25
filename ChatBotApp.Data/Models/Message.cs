@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ChatBotApp.Data.Models
+﻿namespace ChatBotApp.Data.Models
 {
     public class Message
     {

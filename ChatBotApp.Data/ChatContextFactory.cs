@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+
 namespace ChatBotApp.Data
 {
     public class ChatContextFactory : IDesignTimeDbContextFactory<ChatContext>
