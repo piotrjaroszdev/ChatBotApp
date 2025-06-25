@@ -6,12 +6,12 @@
       (rate)="rateMessage($event)">
     </app-message>
   
-    <div *ngIf="isTyping" class="typing-indicator">{{ 'chat.typing' | translate }}</div>
+    <div *ngIf="isTyping" class="typing-indicator">{{ 'CHAT.TYPING' | translate }}</div>
   
     <mat-form-field class="input">
-      <input matInput placeholder="{{'chat.placeholder' | translate}}" [(ngModel)]="newContent" (keyup.enter)="send()" />
+      <input matInput placeholder="{{'CHAT.PLACEHOLDER' | translate}}" [(ngModel)]="newContent" (keyup.enter)="send()" />
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="send()">{{ 'chat.send' | translate }}</button>
+    <button mat-raised-button color="primary" (click)="send()">{{ 'CHAT.SEND' | translate }}</button>
   </div>
   
   

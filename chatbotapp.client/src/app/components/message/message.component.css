@@ -1,0 +1,16 @@
+
+.bot-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #2e3b4e; 
+  color: #f1f1f1;
+}
+
+.user-card {
+  border: 1px solid #ccc; 
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #3e4c59;
+  color: #e0e0e0;
+}

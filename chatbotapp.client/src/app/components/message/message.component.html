@@ -1,10 +1,12 @@
 <!-- message.component.html -->
 <div [ngClass]="message.sender">
+  <mat-card [ngClass]="message.sender === 'bot' ? 'bot-card' : 'user-card'">
     <p>{{ message.content }}</p>
     <small>{{ message.timestamp }}</small>
     <div *ngIf="message.sender === 'bot'">
       <button mat-icon-button (click)="setRating(1)" [disabled]="message.rating === 1">👍</button>
       <button mat-icon-button (click)="setRating(-1)" [disabled]="message.rating === -1">👎</button>
     </div>
+    </mat-card>
   </div>
   

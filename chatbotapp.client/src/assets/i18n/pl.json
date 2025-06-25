@@ -1,9 +1,9 @@
 {
-    "chat": {
-      "send": "Wyślij",
-      "placeholder": "Wpisz wiadomość",
-      "typing": "AI pisze...",
-      "headerName": "Mój Chatbot AI"
+    "CHAT": {
+      "SEND": "Wyślij",
+      "PLACEHOLDER": "Wpisz wiadomość",
+      "TYPING": "AI pisze...",
+      "HEADERNAME": "Mój Chatbot AI"
     }
   }
   
